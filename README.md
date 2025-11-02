@@ -77,6 +77,10 @@ order_result
 |avanza_overview()  |Account balances, positions, and buying power                          |
 |avanza_insights()  |Weekly / monthly performance reports.                                  |
 |avanza_order()     |Place buy/sell orders (market or limit).                               |
-|Function           |Description                                                            |
-|Function           |Description                                                            |
+|avanza_quote()     |Real-time price for single strument (polling).                         |
+|avanza_positions() |Detailed list of holdings.                                             |
+
+All function return tidy data frames (tibble) for seamless integration with teh tidyverse.
+
+## Real-time Data (optional)
 
