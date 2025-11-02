@@ -84,3 +84,43 @@ All function return tidy data frames (tibble) for seamless integration with teh 
 
 ## Real-time Data (optional)
 
+```r
+# Simple polling example
+quote <- avanza_quote(session, id = "199694")
+quote
+#> # A tibble: 1 × 9
+#>   last_price change_pct bid ask volume market_maker highest lowest
+#>        <dbl>      <dbl> <dbl> <dbl>  <int> <chr>            <dbl>  <dbl>
+#> 1      132.       1.45 131.5 132.5  45231 Avanza           134.   130.
+```
+
+For true WebSocket streaming, see vignette("realtime").
+
+## Documentation
+
+```r
+vignette("avanzaR-intro")
+vignette("realtime")
+?avenza_auth
+```
+Full reference: https://sawsimeon.github.io/avanzaR/
+
+## Development 
+
+```r
+# Clone & install in dev mode
+git clone https://github.com/sawsimeon/avanzaR.git
+Rscript -e 'devtools::install("avanzaR", build_vignettes = TRUE)'
+```
+## Disclaimer
+
+Not affilliated with Avanza AB.
+The API may break at any time.
+Never store credentials in source code. Use environment variables:
+
+```r
+Sys.setenv(AVANZA_USER = "my_user")
+Sys.setenv(AVANZA_PASS = "my_password")
+Sys.setenv(AVANZA_TOTP = "JBSWY3DPEHPK3PXP")
+session <- avanza_auth()
+```
