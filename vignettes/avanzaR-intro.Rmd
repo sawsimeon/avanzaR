@@ -1,0 +1,111 @@
+---
+title: "avanzaR: Intro"
+author: "avanzaR developers"
+date: "`r format(Sys.Date())`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\\VignetteIndexEntry{avanzaR: Intro}
+  %\\VignetteEngine{knitr::rmarkdown}
+  %\\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+`avanzaR` is an unofficial R client for the Avanza API. Avanza does not provide a public API and endpoints may change without notice. Use the package at your own risk and never in production without appropriate monitoring.
+
+This vignette demonstrates the package's core usage patterns (examples mirrored from the package README).
+
+## Installation
+
+Install the package from GitHub:
+
+```r
+# remotes::install_github("sawsimeon/avanzaR")
+```
+
+## Secure credentials
+
+Never store credentials in source code. Use environment variables:
+
+```r
+Sys.setenv(AVANZA_USER = "my_user")
+Sys.setenv(AVANZA_PASS = "my_password")
+Sys.setenv(AVANZA_TOTP = "JBSWY3DPEHPK3PXP")
+```
+
+## Quick start
+
+Load the package and authenticate. The package supports TOTP (2FA) via the `totp` package.
+
+```r
+library(avanzaR)
+
+# Authenticate (reads from environment if arguments are NULL)
+session <- avanza_auth(
+  username   = Sys.getenv("AVANZA_USER"),
+  password   = Sys.getenv("AVANZA_PASS"),
+  totp_secret = Sys.getenv("AVANZA_TOTP")
+)
+
+print(session)
+```
+
+### Portfolio overview
+
+Fetch a summary of accounts, buying power and positions:
+
+```r
+overview <- avanza_overview(session)
+print(overview)
+```
+
+### Performance report
+
+Retrieve a short performance report:
+
+```r
+if (nrow(overview) > 0) {
+  account_id <- overview$account_id[1]
+  report <- avanza_insights(session, account_id = account_id, period = "one_week")
+  print(report)
+}
+```
+
+### Quote (real-time polling)
+
+Get a single instrument quote:
+
+```r
+# quote <- avanza_quote(session, id = "199694")
+# print(quote)
+```
+
+### Place an order (USE WITH CAUTION)
+
+This package can place live orders. The following example is commented out to prevent accidental execution.
+
+```r
+# order_result <- avanza_order(
+#   session      = session,
+#   account_id   = account_id,
+#   order_book_id = "199694",
+#   type         = "BUY",
+#   price        = NULL,   # NULL -> market order
+#   volume       = 10,
+#   valid_until  = NULL
+# )
+# print(order_result)
+```
+
+## Notes
+
+- All public functions try to return tidy tibbles where appropriate for seamless integration with the tidyverse.
+- The package uses `httr2` for HTTP requests, `jsonlite` for JSON handling, `totp` for TOTP generation (optional), and `dplyr` / `tibble` for data handling.
+- Tests use `httptest2` to mock API responses.
+
+## Resources
+
+- README: package examples and overview
+- Online reference (if generated): https://sawsimeon.github.io/avanzaR/
